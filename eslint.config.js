@@ -4,7 +4,15 @@ import hooks from "eslint-plugin-react-hooks";
 import refresh from "eslint-plugin-react-refresh";
 
 export default tseslint.config(
-  { ignores: ["dist", "node_modules", "test-results", "playwright-report"] },
+  {
+    ignores: [
+      ".research",
+      "dist",
+      "node_modules",
+      "test-results",
+      "playwright-report",
+    ],
+  },
   {
     files: ["**/*.{ts,tsx}"],
     extends: [js.configs.recommended, ...tseslint.configs.recommended],

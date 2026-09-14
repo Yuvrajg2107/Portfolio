@@ -7,7 +7,9 @@ export type Project = {
   image: string;
   alt: string;
   stack: string[];
-  repository: string;
+  repository?: string;
+  gallery?: { src: string; caption: string }[];
+  highlights?: string[];
   problem: string;
   approach: string;
   detail: string;
@@ -15,7 +17,7 @@ export type Project = {
 };
 
 // Public project READMEs, architecture docs and committed screenshots, reviewed September 2026.
-export const projects: Project[] = [
+const originalProjects: Project[] = [
   {
     id: "expenso",
     name: "Expenso",
@@ -70,23 +72,172 @@ export const projects: Project[] = [
   },
 ];
 
-export const otherWork = [
+const image = (name: string, caption: string) => ({
+  src: "/images/" + name + ".webp",
+  caption,
+});
+const aicd = originalProjects.find((p) => p.id === "detector")!;
+const tessera = originalProjects.find((p) => p.id === "tessera")!;
+const expenso = originalProjects.find((p) => p.id === "expenso")!;
+export const projects: Project[] = [
   {
-    name: "Railway operations",
-    type: "Workflow automation",
-    text: "B-Form and Terminal Position Sheet workflows during industrial training at DRM Office, Solapur.",
-    url: "https://github.com/Yuvrajg2107/railways-bform",
+    ...aicd,
+    name: "AICD",
+    summary:
+      "AI Content Detector — multimodal analysis, with the evidence in view.",
+    highlights: [
+      "English & Marathi detection",
+      "Text, code, image, video & documents",
+      "Model breakdowns & PDF reports",
+    ],
+    gallery: [
+      image("detector", "Multimodal analysis workspace"),
+      image("aicd-english", "English text analysis pipeline"),
+      image("aicd-marathi", "Marathi language analysis"),
+      image("aicd-video", "Video analysis pipeline"),
+    ],
   },
   {
-    name: "GPS College",
-    type: "Web & mobile",
-    text: "Role-based access to academic records, attendance, notices, and student services.",
-    url: "https://github.com/Yuvrajg2107/GPSolapur-App",
+    ...tessera,
+    image: "/images/tessera-workspace.webp",
+    alt: "Tessera public project website introducing its local-first AI testing IDE.",
+    highlights: [
+      "Local code indexing with Tree-sitter",
+      "Reviewable, versioned QA artifacts",
+      "Ollama by default; cloud providers optional",
+    ],
+    gallery: [
+      image("tessera-workspace", "Tessera · public project website"),
+      image(
+        "tessera-settings",
+        "Interactive playground · cached demonstration",
+      ),
+    ],
   },
   {
-    name: "MSBTE Results",
-    type: "Desktop tooling",
-    text: "A desktop workflow for collecting academic results, exploring records, and exporting reports.",
-    url: "https://github.com/Yuvrajg2107/msbte-result-scraper",
+    ...expenso,
+    highlights: [
+      "Personal ledgers & group expenses",
+      "Shared splits & balance tracking",
+      "UPI settlement workflows",
+    ],
+    gallery: [
+      image("expenso", "Dashboard · repository demonstration account"),
+      image(
+        "expenso-ledger",
+        "Personal expense ledger · demonstration account",
+      ),
+      image("expenso-splits", "Shared expense splits · demonstration account"),
+    ],
+  },
+  {
+    id: "msbte",
+    name: "MSBTE-Scrapper",
+    category: "Products",
+    discipline: "Desktop automation & analytics",
+    summary:
+      "From scattered academic results to a searchable, exportable workspace.",
+    image: "/images/msbte-start.webp",
+    alt: "MSBTE Result Scraper session setup screen from the project repository.",
+    stack: ["Tauri", "React", "FastAPI", "SQLite", "Playwright"],
+    repository: "https://github.com/Yuvrajg2107/msbte-result-scraper",
+    problem:
+      "Reviewing academic results one record at a time makes it difficult to compare performance, revisit a session, or prepare a consistent report.",
+    approach:
+      "A desktop workflow brings session setup, concurrent result collection, live progress, and searchable result tables into one interface. A FastAPI backend stores sessions in SQLite for later review.",
+    detail:
+      "Excel exports include subject statistics, class classifications, pass rates, and rankings. Saved sessions can be renamed and re-exported, keeping collection and analysis connected.",
+    highlights: [
+      "Live collection progress",
+      "Searchable results & saved sessions",
+      "Excel reports with subject-level analysis",
+    ],
+    gallery: [
+      image("msbte-start", "Configure a result collection session"),
+      image("msbte-results", "Live progress and results table"),
+    ],
+  },
+  {
+    id: "railnova",
+    name: "Railnova",
+    category: "Products",
+    discipline: "Railway operations software",
+    summary:
+      "A focused workspace for railway reporting and operational records.",
+    image: "/images/railnova-signin.webp",
+    alt: "Railnova railway operations sign-in interface captured from the local frontend.",
+    stack: ["React", "TypeScript", "Express", "MySQL"],
+    repository: "https://github.com/Yuvrajg2107/railways-bform",
+    problem:
+      "Railway reporting involves structured records, repeated data entry, and summaries that need to stay accessible across operational workflows.",
+    approach:
+      "Built around B-Form reporting, summaries, charts, and role-based access, the application pairs a React interface with an Express API and database-backed records.",
+    detail:
+      "The project includes Excel import, user management, and analytical views. Developed in the context of industrial training at the DRM Office in Solapur, it connects interface work with a practical reporting process.",
+    highlights: [
+      "B-Form reporting & summaries",
+      "Excel import & analytical charts",
+      "User management & protected access",
+    ],
+    gallery: [
+      image("railnova-signin", "Railway operations · sign-in screen"),
+      image(
+        "railnova-form",
+        "B-Form workspace · local preview with no operational data",
+      ),
+    ],
+  },
+  {
+    id: "gps-website",
+    name: "GPS Website",
+    category: "Products",
+    discipline: "College website",
+    summary: "A public-facing introduction to Government Polytechnic Solapur.",
+    image: "/images/gps-website-home.webp",
+    alt: "GPS Website homepage captured from the local college website prototype.",
+    stack: ["React", "Vite", "Tailwind CSS", "Glide.js"],
+    problem:
+      "A college website needs to introduce the institution and make campus information easy to browse for prospective students and visitors.",
+    approach:
+      "A React website prototype organizes the college identity, homepage carousel, welcome section, and campus-life content into a public-facing experience.",
+    detail:
+      "The local project uses reusable header, homepage, and footer components with Glide.js carousels. These previews show the current prototype, including placeholder copy and imagery; they do not imply an official college deployment.",
+    highlights: [
+      "Institutional homepage & navigation",
+      "Image carousels & campus-life sections",
+      "Reusable React components",
+    ],
+    gallery: [
+      image("gps-website-home", "Homepage · website prototype"),
+      image("gps-website-campus", "College introduction · website prototype"),
+    ],
+  },
+  {
+    id: "gps-app",
+    name: "GPS APP",
+    category: "Products",
+    discipline: "College management · web & Android",
+    summary:
+      "Academic work, student services, and campus communication in one system.",
+    image: "/images/gps-app-login.webp",
+    alt: "GPS College Management application with staff, student, and parent sign-in options.",
+    stack: ["React", "Capacitor", "Android", "Axios"],
+    repository: "https://github.com/Yuvrajg2107/GPSolapur-App",
+    problem:
+      "Students, staff, parents, and office teams need different views of the same academic processes, from attendance and marks to notices and certificate requests.",
+    approach:
+      "Role-specific interfaces bring attendance, timetables, study materials, marks, leave applications, and administrative requests into a shared college management system.",
+    detail:
+      "The repository includes a React web frontend and Capacitor Android integration, with mobile push notification support. Office, HOD, staff, student, clerk, and parent roles each have dedicated workflows.",
+    highlights: [
+      "Six role-specific workflows",
+      "Attendance, marks & timetables",
+      "Notices, leave & certificate requests",
+    ],
+    gallery: [
+      image("gps-app-login", "Staff access · web frontend"),
+      image("gps-app-student", "Student access · mobile viewport"),
+      image("gps-app-parent", "Parent access · mobile viewport"),
+    ],
   },
 ];

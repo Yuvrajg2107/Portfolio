@@ -19,10 +19,11 @@ import {
   MinusIcon,
   ArrowCounterClockwiseIcon,
 } from "@phosphor-icons/react";
-import { projects, otherWork } from "./projects";
+import { projects } from "./projects";
 import type { Project } from "./projects";
 
 const ease = [0.22, 1, 0.36, 1] as const;
+const resume = "/documents/yuvraj-gandhmal-resume.pdf";
 const email = "yuvrajgandhmal@gmail.com";
 
 function Reveal({
@@ -205,8 +206,22 @@ function ProjectDialog({
           </div>
           <h2 id="project-title">{project.name}</h2>
           <p className="dialog-summary">{project.summary}</p>
-          <div className={`dialog-image ${project.id}`}>
-            <img src={project.image} alt={project.alt} />
+          <div className="dialog-gallery">
+            {(
+              project.gallery ?? [{ src: project.image, caption: project.alt }]
+            ).map((shot) => (
+              <figure key={shot.src}>
+                <a
+                  href={shot.src}
+                  target="_blank"
+                  rel="noreferrer"
+                  aria-label={"Open full image: " + shot.caption}
+                >
+                  <img src={shot.src} alt={shot.caption} loading="lazy" />
+                </a>
+                <figcaption>{shot.caption}</figcaption>
+              </figure>
+            ))}
           </div>
           <div className="dialog-copy">
             <div>
@@ -223,14 +238,16 @@ function ProjectDialog({
             </div>
           </div>
           <div className="dialog-links">
-            <a
-              className="button"
-              href={project.repository}
-              target="_blank"
-              rel="noreferrer"
-            >
-              Explore repository <GithubLogoIcon size={20} />
-            </a>
+            {project.repository && (
+              <a
+                className="button"
+                href={project.repository}
+                target="_blank"
+                rel="noreferrer"
+              >
+                Explore repository <GithubLogoIcon size={20} />
+              </a>
+            )}
             {project.live && (
               <a
                 className="text-link"
@@ -257,6 +274,11 @@ function ProjectCard({
   index: number;
   onOpen: (p: Project) => void;
 }) {
+  const [shotIndex, setShotIndex] = useState(0);
+  const shots = project.gallery ?? [
+    { src: project.image, caption: project.alt },
+  ];
+  const shot = shots[shotIndex];
   return (
     <Reveal className={`project-card ${project.id}`}>
       <button
@@ -265,37 +287,60 @@ function ProjectCard({
         aria-label={`View ${project.name} project details`}
       >
         <img
-          src={project.image}
-          alt={project.alt}
+          src={shot.src}
+          alt={shot.caption}
           loading="lazy"
-          width={project.id === "tessera" ? 512 : 1440}
-          height={project.id === "tessera" ? 512 : 900}
+          width={1440}
+          height={900}
         />
         <span className="project-open">
           <ArrowUpRightIcon size={27} />
         </span>
-        {project.id === "tessera" && (
-          <span className="tessera-title" aria-hidden="true">
-            tessera<span>Code in. Clarity out.</span>
-          </span>
-        )}
       </button>
+      <div
+        className="preview-strip"
+        role="group"
+        aria-label={project.name + " screenshots"}
+      >
+        {shots.map((s, i) => (
+          <button
+            key={s.src}
+            aria-label={"Preview " + s.caption}
+            aria-pressed={i === shotIndex}
+            onClick={() => setShotIndex(i)}
+          >
+            <img src={s.src} alt="" loading="lazy" width="160" height="100" />
+            <span>{String(i + 1).padStart(2, "0")}</span>
+          </button>
+        ))}
+      </div>
       <div className="project-meta">
         <span className="mono">
           0{index + 1} / {project.discipline}
         </span>
-        <span className="mono">2026</span>
+        <span className="mono">{shots.length} views</span>
       </div>
       <button className="project-title" onClick={() => onOpen(project)}>
         <h3>{project.name}</h3>
         <ArrowUpRightIcon size={26} />
       </button>
       <p>{project.summary}</p>
+      <ul className="project-highlights">
+        {project.highlights?.map((h) => (
+          <li key={h}>{h}</li>
+        ))}
+      </ul>
       <div className="stack">
         {project.stack.map((s) => (
           <span key={s}>{s}</span>
         ))}
       </div>
+      <button
+        className="text-link case-study-link"
+        onClick={() => onOpen(project)}
+      >
+        Read project story <ArrowRightIcon size={18} />
+      </button>
     </Reveal>
   );
 }
@@ -363,6 +408,9 @@ function App() {
           <nav aria-label="Main navigation">
             <a href="#work">Work</a>
             <a href="#about">About</a>
+            <a href={resume} target="_blank" rel="noreferrer">
+              Résumé
+            </a>
             <a href="#contact">
               Contact <ArrowUpRightIcon size={16} />
             </a>
@@ -405,8 +453,25 @@ function App() {
                   I’m Yuvraj. I build practical products, applied AI, and tools
                   that take the busywork out.
                 </p>
-                <a className="button hero-cta" href="#work">
-                  Explore my work <ArrowDownRightIcon size={21} />
+                <div className="hero-actions">
+                  <a
+                    className="button"
+                    href={resume}
+                    target="_blank"
+                    rel="noreferrer"
+                  >
+                    See my résumé <ArrowUpRightIcon size={21} />
+                  </a>
+                  <a
+                    className="text-link"
+                    href={resume}
+                    download="Yuvraj-Gandhmal-Resume.pdf"
+                  >
+                    Download résumé <ArrowDownRightIcon size={18} />
+                  </a>
+                </div>
+                <a className="text-link work-cta" href="#work">
+                  Explore my work <ArrowDownRightIcon size={18} />
                 </a>
               </motion.div>
             </div>
@@ -458,27 +523,6 @@ function App() {
             <p className="sr-only" role="status">
               {visibleProjects.length} projects shown
             </p>
-            <Reveal className="more-work">
-              <h3>Also on the workbench</h3>
-              <div>
-                {otherWork.map((p) => (
-                  <a href={p.url} target="_blank" rel="noreferrer" key={p.name}>
-                    <span className="other-name">{p.name}</span>
-                    <span className="other-description">{p.text}</span>
-                    <span className="other-type mono">{p.type}</span>
-                    <ArrowUpRightIcon size={22} />
-                  </a>
-                ))}
-              </div>
-              <a
-                className="text-link archive-link"
-                href="https://github.com/Yuvrajg2107"
-                target="_blank"
-                rel="noreferrer"
-              >
-                The rest lives on GitHub <GithubLogoIcon size={20} />
-              </a>
-            </Reveal>
           </section>
           <section
             className="about-section page-width"
