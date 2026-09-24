@@ -27,3 +27,11 @@ Screenshot sources, reviewed September 14, 2026:
 - GPS APP: local `D:/GPS/GPSolapur-App/gps-college-web`, staff sign-in plus student and parent options at a mobile viewport. These show the web frontend, not an Android emulator.
 
 The project's existing sculpture artwork remains unchanged. Gallery assets are optimized WebP files stored locally. Temporary preview copies and capture scripts are excluded from Git under `.research/`.
+
+## Google Search Console
+
+The URL-prefix property is `https://yuvraj-gandhmal.vercel.app/`.
+
+Keep `public/google00b4aa73507a7f1c.html` in place after verification. Vite copies it unchanged to the deployment root. The homepage canonical URL, `public/robots.txt`, and `public/sitemap.xml` use the production hostname. The sitemap lists only the homepage because the current project sections and dialogs are not separate pages.
+
+After deployment, verify ownership in Search Console, submit `sitemap.xml`, then inspect the homepage URL and request indexing. Verification and sitemap submission do not guarantee indexing.
